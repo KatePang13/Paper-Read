@@ -1,54 +1,54 @@
-# Designing a URL Shortening service like TinyURL
+# 设计一个类似TinyURL的短URL服务
 
-Let's design a URL shortening service like TinyURL. This service will provide short aliases redirecting to long URLs. Similar services: bit.ly, goo.gl, qlink.me, etc. Difficulty Level: Easy
+让我们来设计一个类似TinyURL的短URL服务. 该服务为长URL提供别名，HTTP访问该别名可重定向到长URL. 类似的服务包括: bit.ly, goo.gl, qlink.me, 等.
 
-### 1. Why do we need URL shortening?[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px1-why-do-we-need-url-shorteningdiv)
+### 1. 为什么需要短URL?[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px1-why-do-we-need-url-shorteningdiv)
 
-URL shortening is used to create shorter aliases for long URLs. We call these shortened aliases “short links.” Users are redirected to the original URL when they hit these short links. Short links save a lot of space when displayed, printed, messaged, or tweeted. Additionally, users are less likely to mistype shorter URLs.
+短URL服务用以为长URL生成长度更短的别名. 通常把这种别名叫做短链接。 当用户点击短链接时，会被重定向到原链接. 短链接在显示，发送消息和推文等场景节约了很多空间；另外，短链接更不容易输入错误。
 
-For example, if we shorten this page through TinyURL:
+比如，我们用tinyurl来处理下面这个链接：
 
 > https://www.educative.io/collection/page/5668639101419520/5649050225344512/5668600916475904/
 
-We would get:
+我们会得到如下短链接：
 
 > http://tinyurl.com/jlg8zpc
 
-The shortened URL is nearly one-third the size of the actual URL.
+短链接的长度差不多是原链接的1/3 ;
 
-URL shortening is used for optimizing links across devices, tracking *individual* links to analyze *audience* and campaign performance, and hiding *affiliated* original URLs.
+缩短网址用于优化跨设备的链接，跟踪各个链接以分析受众群体和广告系列的效果，并隐藏原始的URL.
 
-If you haven’t used [tinyurl.com](http://tinyurl.com/) before, please try creating a new shortened URL and spend some time going through the various options their service offers. This will help you a lot in understanding this chapter.
+如果你还未用过[tinyurl.com](http://tinyurl.com/),建议去使用它生成一个短链接，并花一点时间去关注一下tinyurl提供的各种可选项，这可以帮助你更好地理解本文。
 
-### 2. Requirements and Goals of the System[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px2-requirements-and-goals-of-the-systemdiv)
+### 2. 系统的需求和目标[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px2-requirements-and-goals-of-the-systemdiv)
 
-💡   **You should always clarify requirements at the beginning of the interview. Be sure to ask questions to find the exact scope of the system that the interviewer has in mind.**
+💡   **你应该在面试开始的时候厘清需求,你应该通过向面试官提问来确保你对所要设计系统的边界了然于胸。**
 
-Our URL shortening system should meet the following requirements:
+我们的短URL服务应该满足以下需求:
 
-**Functional Requirements:**
+**功能性需求:**
 
 1. Given a URL, our service should generate a shorter and unique alias of it. This is called a short link. This link should be short enough to be easily copied and pasted into applications.
 2. When users access a short link, our service should redirect them to the original link.
 3. Users should optionally be able to pick a custom short link for their URL.
 4. Links will expire after a standard default timespan. Users should be able to specify the expiration time.
 
-**Non-Functional Requirements:**
+**非功能性需求:**
 
 1. The system should be highly available. This is required because, if our service is down, all the URL redirections will start failing.
 2. URL redirection should happen in real-time with minimal latency.
 3. Shortened links should not be guessable (not predictable).
 
-**Extended Requirements:**
+**额外需求:**
 
 1. Analytics; e.g., how many times a redirection happened?
 2. Our service should also be accessible through REST APIs by other services.
 
-### 3. Capacity Estimation and Constraints[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px3-capacity-estimation-and-constraintsdiv)
+### 3. 容量评估和约束分析[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px3-capacity-estimation-and-constraintsdiv)
 
-Our system will be read-heavy. There will be lots of redirection requests compared to new URL shortenings. Let’s assume a 100:1 ratio between read and write.
+短URL服务会是读密集型服务，相比于生成一个新的短链接，更多的请求会是重定向请求， 这里我们假设读写比例是100 : 1。
 
-**Traffic estimates:** Assuming, we will have 500M new URL shortenings per month, with 100:1 read/write ratio, we can expect 50B redirections during the same period:
+**流量评估:** Assuming, we will have 500M new URL shortenings per month, with 100:1 read/write ratio, we can expect 50B redirections during the same period:
 
 100 * 500M => 50B
 
@@ -60,7 +60,7 @@ Considering 100:1 read/write ratio, URLs redirections per second will be:
 
 100 * 200 URLs/s = 20K/s
 
-**Storage estimates:** Let’s assume we store every URL shortening request (and associated shortened link) for 5 years. Since we expect to have 500M new URLs every month, the total number of objects we expect to store will be 30 billion:
+**存储评估:** Let’s assume we store every URL shortening request (and associated shortened link) for 5 years. Since we expect to have 500M new URLs every month, the total number of objects we expect to store will be 30 billion:
 
 500 million * 5 years * 12 months = 30 billion
 
@@ -69,8 +69,7 @@ Let’s assume that each stored object will be approximately 500 bytes (just a b
 30 billion * 500 bytes = 15 TB
 
 <iframe title="output-iframe" __idm_frm__="102" style="box-sizing: border-box; border: none; height: 308px; width: 902px;"></iframe>
-
-**Bandwidth estimates:** For write requests, since we expect 200 new URLs every second, total incoming data for our service will be 100KB per second:
+**带宽评估:** For write requests, since we expect 200 new URLs every second, total incoming data for our service will be 100KB per second:
 
 200 * 500 bytes = 100 KB/s
 
@@ -78,7 +77,7 @@ For read requests, since every second we expect ~20K URLs redirections, total ou
 
 20K * 500 bytes = ~10 MB/s
 
-**Memory estimates:** If we want to cache some of the hot URLs that are frequently accessed, how much memory will we need to store them? If we follow the 80-20 rule, meaning 20% of URLs generate 80% of traffic, we would like to cache these 20% hot URLs.
+**内存评估:** If we want to cache some of the hot URLs that are frequently accessed, how much memory will we need to store them? If we follow the 80-20 rule, meaning 20% of URLs generate 80% of traffic, we would like to cache these 20% hot URLs.
 
 Since we have 20K requests per second, we will be getting 1.7 billion requests per day:
 
@@ -90,7 +89,7 @@ To cache 20% of these requests, we will need 170GB of memory.
 
 One thing to note here is that since there will be a lot of duplicate requests (of the same URL), therefore, our actual memory usage will be less than 170GB.
 
-**High level estimates:** Assuming 500 million new URLs per month and 100:1 read:write ratio, following is the summary of the high level estimates for our service:
+**顶层评估:** Assuming 500 million new URLs per month and 100:1 read:write ratio, following is the summary of the high level estimates for our service:
 
 | New URLs            | 200/s   |
 | ------------------- | ------- |
@@ -100,46 +99,47 @@ One thing to note here is that since there will be a lot of duplicate requests (
 | Storage for 5 years | 15TB    |
 | Memory for cache    | 170GB   |
 
-### 4. System APIs[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px4-system-apisdiv)
+### 4. 系统APIs[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px4-system-apisdiv)
 
-💡   **Once we've \*finalized\* the requirements, it's always a good idea to define the system APIs. This should \*explicitly\* state what is expected from the system.**
+💡   **一旦我们的需求最终确认，此时定义系统APIs是再好不过了。API定义要能够明确描述系统的预期状态。**
 
-We can have SOAP or REST APIs to expose the functionality of our service. Following could be the definitions of the APIs for creating and deleting URLs:
+我们可以用SOAP或者RESTful APIs来暴露我们的服务。下面给出创建和删除短链接的接口定义：
 
 ```
 createURL(api_dev_key, original_url, custom_alias=None, user_name=None, expire_date=None)
 ```
 
 **Parameters:**
-api_dev_key (string): The API developer key of a registered account. This will be used to, among other things, throttle users based on their allocated quota.
-original_url (string): Original URL to be shortened.
-custom_alias (string): Optional custom key for the URL.
-user_name (string): Optional user name to be used in the encoding.
-expire_date (string): Optional expiration date for the shortened URL.
+
+api_dev_key (string): 已注册用户的API developer key，用户相关逻辑，比如用于根据分配的配额限制用户。
+original_url (string): 原始URL。
+custom_alias (string):(Optional)用户自定义关键字。
+user_name (string): (Optional)用户名，用于在编码中使用。
+expire_date (string): (Optional)短链接的过期时间。
 
 **Returns:** (string)
-A successful insertion returns the shortened URL; otherwise, it returns an error code.
+成功则返回生成的短链接; 否则返回错误码.
 
 ```
 deleteURL(api_dev_key, url_key)
 ```
 
-Where “url_key” is a string representing the shortened URL to be retrieved. A successful deletion returns ‘URL Removed’.
+url_key表示要删除的短链接；成功删除返回 ‘URL Removed’.
 
 **How do we detect and prevent abuse?** A malicious user can put us out of business by consuming all URL keys in the current design. To prevent abuse, we can limit users via their api_dev_key. Each api_dev_key can be limited to a certain number of URL creations and redirections per some time period (which may be set to a different duration per developer key).
 
-### 5. Database Design[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px5-database-designdiv)
+### 5. 数据库设计[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px5-database-designdiv)
 
-💡   **Defining the DB schema in the early stages of the interview would help to understand the data flow among various components and later would guide towards data partitioning.**
+💡   **在系统设计的初期定义数据库方案设计可以帮助我们理解多个组件间的数据流，并在后续为数据分区提供参照**
 
-A few observations about the nature of the data we will store:
+场景数据特点分析:
 
-1. We need to store billions of records.
-2. Each object we store is small (less than 1K).
-3. There are no relationships between records—other than storing which user created a URL.
-4. Our service is read-heavy.
+1. billions 级别的记录数.
+2. 对象尺寸很小 (< 1K).
+3. 记录之间没有相关关系—除了URL和URL的创建者之间存在关系.
+4. 服务是读密集型.
 
-#### Database Schema: [#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#database-schema)
+#### 数据库方案: [#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#database-schema)
 
 We would need two tables: one for storing information about the URL mappings, and one for the user’s data who created the short link.
 
@@ -147,13 +147,13 @@ We would need two tables: one for storing information about the URL mappings, an
 
 **What kind of database should we use?** Since we *anticipate* storing billions of rows, and we don’t need to use relationships between objects – a NoSQL store like [DynamoDB](https://en.wikipedia.org/wiki/Amazon_DynamoDB), [Cassandra](https://en.wikipedia.org/wiki/Apache_Cassandra) or [Riak](https://en.wikipedia.org/wiki/Riak) is a better choice. A NoSQL choice would also be easier to scale. Please see [SQL vs NoSQL](https://www.educative.io/collection/page/5668639101419520/5649050225344512/5728116278296576/) for more details.
 
-### 6. Basic System Design and Algorithm[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px6-basic-system-design-and-algorithmdiv)
+### 6. 基本系统设计和核心算法[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px6-basic-system-design-and-algorithmdiv)
 
 The problem we are solving here is, how to generate a short and unique key for a given URL.
 
 In the TinyURL example in Section 1, the shortened URL is “http://tinyurl.com/jlg8zpc”. The last seven characters of this URL is the short key we want to generate. We’ll explore two solutions here:
 
-### a. Encoding actual URL [#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#a-encoding-actual-url)
+### a. 对原始URL进行编码 [#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#a-encoding-actual-url)
 
 We can compute a unique hash (e.g., [MD5](https://en.wikipedia.org/wiki/MD5) or [SHA256](https://en.wikipedia.org/wiki/SHA-2), etc.) of the given URL. The hash can then be encoded for displaying. This encoding could be base36 ([a-z ,0-9]) or base62 ([A-Z, a-z, 0-9]) and if we add ‘+’ and ‘/’ we can use [Base64](https://en.wikipedia.org/wiki/Base64#Base64_table) encoding. A reasonable question would be, what should be the length of the short key? 6, 8, or 10 characters?
 
@@ -175,13 +175,13 @@ Another solution could be to append user id (which should be unique) to the inpu
 
 
 
-Request flow for shortening of a URL
+生成短链接的请求流
 
 **9** of 9
 
 
 
-### b. Generating keys offline [#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#b-generating-keys-offline)
+### b. 离线密钥生成 [#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#b-generating-keys-offline)
 
 We can have a standalone **Key Generation Service (KGS)** that generates random six-letter strings beforehand and stores them in a database (let’s call it key-DB). Whenever we want to shorten a URL, we will just take one of the already-generated keys and use it. This approach will make things quite simple and fast. Not only are we not encoding the URL, but we won’t have to worry about duplications or collisions. KGS will make sure all the keys inserted into key-DB are unique
 
@@ -209,41 +209,41 @@ KGS also has to make sure not to give the same key to multiple servers. For that
 
 High level system design for URL shortening
 
-### 7. Data Partitioning and Replication[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px7-data-partitioning-and-replicationdiv)
+### 7. 数据分区和副本备份[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px7-data-partitioning-and-replicationdiv)
 
-To scale out our DB, we need to partition it so that it can store information about billions of URLs. We need to come up with a partitioning scheme that would divide and store our data into different DB servers.
+为了数据库能够水平拓展来存储billions级别的数据，我们需要进行数据分区. 我们需要建立一个分区方案来将数据划分并存储到不同的DB服务器.
 
-**a. Range Based Partitioning:** We can store URLs in separate partitions based on the first letter of the hash key. Hence we save all the URLs starting with letter ‘A’ (and ‘a’) in one partition, save those that start with letter ‘B’ in another partition and so on. This approach is called range-based partitioning. We can even combine certain less frequently occurring letters into one database partition. We should come up with a static partitioning scheme so that we can always store/find a URL in a predictable manner.
+**a. 基于范围(range)的分区:** We can store URLs in separate partitions based on the first letter of the hash key. Hence we save all the URLs starting with letter ‘A’ (and ‘a’) in one partition, save those that start with letter ‘B’ in another partition and so on. This approach is called range-based partitioning. We can even combine certain less frequently occurring letters into one database partition. We should come up with a static partitioning scheme so that we can always store/find a URL in a predictable manner.
 
 The main problem with this approach is that it can lead to unbalanced DB servers. For example, we decide to put all URLs starting with letter ‘E’ into a DB partition, but later we realize that we have too many URLs that start with the letter ‘E’.
 
-**b. Hash-Based Partitioning:** In this scheme, we take a hash of the object we are storing. We then calculate which partition to use based upon the hash. In our case, we can take the hash of the ‘key’ or the short link to determine the partition in which we store the data object.
+**b. 基于hash的分区:** In this scheme, we take a hash of the object we are storing. We then calculate which partition to use based upon the hash. In our case, we can take the hash of the ‘key’ or the short link to determine the partition in which we store the data object.
 
 Our hashing function will randomly distribute URLs into different partitions (e.g., our hashing function can always map any ‘key’ to a number between [1…256]), and this number would represent the partition in which we store our object.
 
 This approach can still lead to overloaded partitions, which can be solved by using [Consistent Hashing](https://www.educative.io/collection/page/5668639101419520/5649050225344512/5709068098338816/).
 
-### 8. Cache[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px8-cachediv)
+### 8. 缓存[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px8-cachediv)
 
 We can cache URLs that are frequently accessed. We can use some off-the-shelf solution like [Memcached](https://en.wikipedia.org/wiki/Memcached), which can store full URLs with their respective hashes. The application servers, before hitting backend storage, can quickly check if the cache has the desired URL.
 
-**How much cache memory should we have?** We can start with 20% of daily traffic and, based on clients’ usage pattern, we can adjust how many cache servers we need. As estimated above, we need 170GB memory to cache 20% of daily traffic. Since a modern-day server can have 256GB memory, we can easily fit all the cache into one machine. Alternatively, we can use a couple of smaller servers to store all these hot URLs.
+**我们需要多少的cache容量?** We can start with 20% of daily traffic and, based on clients’ usage pattern, we can adjust how many cache servers we need. As estimated above, we need 170GB memory to cache 20% of daily traffic. Since a modern-day server can have 256GB memory, we can easily fit all the cache into one machine. Alternatively, we can use a couple of smaller servers to store all these hot URLs.
 
-**Which cache \*eviction policy\* would best fit our needs?** When the cache is full, and we want to replace a link with a newer/hotter URL, how would we choose? Least Recently Used (LRU) can be a reasonable policy for our system. Under this policy, we discard the least recently used URL first. We can use a [Linked Hash Map](https://docs.oracle.com/javase/7/docs/api/java/util/LinkedHashMap.html) or a similar data structure to store our URLs and Hashes, which will also keep track of the URLs that have been accessed recently.
+**我们需要什么缓存淘汰策略?** When the cache is full, and we want to replace a link with a newer/hotter URL, how would we choose? Least Recently Used (LRU) can be a reasonable policy for our system. Under this policy, we discard the least recently used URL first. We can use a [Linked Hash Map](https://docs.oracle.com/javase/7/docs/api/java/util/LinkedHashMap.html) or a similar data structure to store our URLs and Hashes, which will also keep track of the URLs that have been accessed recently.
 
 To further increase the efficiency, we can replicate our caching servers to distribute the load between them.
 
-**How can each cache replica be updated?** Whenever there is a cache miss, our servers would be hitting a backend database. Whenever this happens, we can update the cache and pass the new entry to all the cache replicas. Each replica can update its cache by adding the new entry. If a replica already has that entry, it can simply ignore it.
+**如何更新各个cache副本?** 不管哪个cache服务器出现miss,都会回到后端访问数据. 此时不管什么情况，我们都可以将这个miss的项更新到所有的cache副本. 每个cache副本都可以对该项进行更新. 如果该cache副本服务器已经缓存了这一项则忽略本次更新就可以.
 
 
 
-Request flow for accessing a shortened URL
+访问短链接的请求流
 
 **11** of 11
 
 
 
-### 9. Load Balancer (LB)[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px9-load-balancer-lbdiv)
+### 9. 负载均衡 (LB)[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px9-load-balancer-lbdiv)
 
 We can add a Load balancing layer at three places in our system:
 
@@ -255,7 +255,7 @@ Initially, we could use a simple Round Robin approach that distributes incoming 
 
 A problem with Round Robin LB is that we don’t take the server load into consideration. If a server is overloaded or slow, the LB will not stop sending new requests to that server. To handle this, a more intelligent LB solution can be placed that periodically queries the backend server about its load and adjusts traffic based on that.
 
-### 10. *Purging* or DB cleanup[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px10-purging-or-db-cleanupdiv)
+### 10. 历史数据清理[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px10-purging-or-db-cleanupdiv)
 
 Should entries stick around forever or should they be purged? If a user-specified expiration time is reached, what should happen to the link?
 
@@ -271,13 +271,13 @@ If we chose to actively search for expired links to remove them, it would put a 
 
 Detailed component design for URL shortening
 
-### 11. *Telemetry*[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px11-telemetrydiv)
+### 11. 监控[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px11-telemetrydiv)
 
 How many times a short URL has been used, what were user locations, etc.? How would we store these statistics? If it is part of a DB row that gets updated on each view, what will happen when a popular URL is slammed with a large number of concurrent requests?
 
 Some statistics worth tracking: country of the visitor, date and time of access, web page that refers the click, browser, or platform from where the page was accessed.
 
-### 12. Security and Permissions[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px12-security-and-permissionsdiv)
+### 12. 安全与权限控制[#](https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR#div-stylecolorblack-background-colore2f4c7-border-radius5px-padding5px12-security-and-permissionsdiv)
 
 Can users create private URLs or allow a particular set of users to access a URL?
 
