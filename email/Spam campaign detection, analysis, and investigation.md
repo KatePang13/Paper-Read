@@ -106,13 +106,17 @@ A straightforward approach for grouping spam emails into campaigns is to calcula
 
 We approach the problem of identifying spam campaigns based on the premise that spam emails sent in one campaign are disseminated autonomously by the same mean. As a result, they must have the same goal and share common characteristics. However, a [spammer](https://www.sciencedirect.com/topics/computer-science/spammer) may employ many obfuscation techniques on the subject, the content and the embedded URL(s). For instance, we have observed that spammers may alter the email subjects in the same campaign, but these subjects still have the same meaning when interpreted manually. This behavior has also been witnessed in ([Pitsillidis et al., 2010](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib33)). Another observation is that a spam email may contain a random text from a book or a Wikipedia article ([Stringhini et al., 2011](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib37)). The text is written by a human and therefore cannot be easily distinguished using statistical methods. Spammers also utilize fast-flux service networks and randomly generated subdomains ([Wei et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib41)) to obfuscate the embedded URLs. Furthermore, spammers usually insert random strings to the embedded URLs to confuse spam filters, or include tracking data to verify their target email lists and monitor their progress.
 
-首先，我们假设一个前提，一个spam活动所发送的spam都是以相同的方式自动发送的，我们要做的是识别这样的活动，所以，这些邮件的目的是一致的，而且具有共同特征。但是，spammer 可能会在标题，内容和URL上使用各种混淆技术。spammer 可以在同一个活动中使用不同的标题，但是这些标题的含义对人类而言是一样的。
+首先，我们假设一个前提，一个spam活动所发送的spam都是以相同的方式自动发送的，我们要做的是识别这样的活动，所以，这些邮件的目的是一致的，而且具有共同特征。但是，spammer 可能会在标题，内容和URL上使用各种混淆技术。spammer 可以在同一个活动中使用不同的标题，但是这些标题的含义对人类而言是一样的。另一种现象是spam email 包含了书本或者Wikipedia文件中的一段随机的文本，这种文本是由人类写的，因此很难用统计的方式加以识别。Spammer 也会使用 快速通行服务网络 和 随机生成的子域名 来混淆 URL。还有，spammer 经常在URL上插入一段随机字符串来迷惑spam过滤器，或者包含追踪信息来验证目标email列表并监控其进度。
 
 Because the obfuscation can be employed at any part of a spam email, our spam campaign detection technique must consider features from the whole spam email. We chose the features for our technique from the header, the textual content, the embedded URL(s) and the attachment(s) of spam emails. Our main spam campaign detection method is based on the *[frequent-pattern](https://www.sciencedirect.com/topics/computer-science/frequent-patterns)* tree (FP-Tree), which is the first step of the FP-Growth algorithm ([Han et al., 2000](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib15), [Han et al., 2004](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib16)). The FP-Tree technique was originally used by [Calais et al. (2008)](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib5). However, our approach is different in terms of the features used as well as the signals used to identify spam campaigns from the previously constructed FP-Tree. Furthermore, we enhance our method to detect spam campaigns on-the-fly by adopting a technique that incrementally builds the FP-Tree ([Cheung and Zaiane, 2003](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib6)). A detailed explanation of our methodology can be found in the next section.
+
+因为混淆可能被应用在一封 spam email的任何地方，我们的 spam活动检测技术必须考虑整个 spam email 的特征。我们从spam email的 header, 文本内容，URL和附件 中提取特征。我们主要的检测方法是基于 频率模式树 （ *[frequent-pattern](https://www.sciencedirect.com/topics/computer-science/frequent-patterns)* tree），这是 频率模式增长算法的第一步。 FP-Tree 法最早在 [Calais et al. (2008)](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib5) 被使用。但是，我们的方法在使用的特征 与 用于从先前构建的FP-Tree识别垃圾邮件活动的信号方面有所不同。另外，我们通过采用逐步构建FP-Tree的技术 ([Cheung and Zaiane, 2003](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib6))来增强快速检测垃圾邮件活动的方法。方法的详细说明将在下一节展开。
 
 ## Our software framework
 
 As depicted in [Fig. 1](https://www.sciencedirect.com/science/article/pii/S1742287615000079#fig1), the main components of our spam campaign detection, analysis and investigation framework are the following:
+
+框架的主要模块如下图所示：
 
 - •
 
@@ -124,6 +128,8 @@ As depicted in [Fig. 1](https://www.sciencedirect.com/science/article/pii/S17422
 
 The database is carefully chosen so that it is scalable, flexible and able to store relationships between different entities. Section [4.1](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.1) elucidates our choice.
 
+中心数据库：数据库是经过精心选择的，以满足 可拓展，灵活，关系型数据的需求。Section 4.1 将详细描述。
+
 - •
 
   *Parsing and Features Extraction*
@@ -131,6 +137,8 @@ The database is carefully chosen so that it is scalable, flexible and able to st
 
 
 This component parses spam emails, extracts and stores their features in the central database for further analysis. More details about this component are given in Section [4.2](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.2).
+
+
 
 - •
 
@@ -140,6 +148,8 @@ This component parses spam emails, extracts and stores their features in the cen
 
 This module takes the features from the central database as its inputs, identifies spam campaigns and saves them back into the database. Section [4.3](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.3) explains this module thoroughly.
 
+
+
 - •
 
   *Spam Campaign Characterization*
@@ -148,11 +158,23 @@ This module takes the features from the central database as its inputs, identifi
 
 This component gives insights into spam campaigns to further reduce the analysis time and effort. We combine different data sources, label and score spam campaigns to help investigators quickly grasp the objective of a campaign and concentrate on what they are after. This component is described in detail in Section [4.4](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.4).
 
+**中心数据库**：精心选型以满足 可拓展，灵活，关系型数据的需求。Section 4.1 将详细描述。
+
+**过滤器和特征提取**：解析spam emails, 提取和存储特征到中心数据库，以供后续分析。Section 4.2 将详细描述。
+
+**spam campaign 检测**：从中心数据库获取特征，标识 spam campaign 并存入到 中心数据库。Section 4.3 将详细描述
+
+**spam campaign Characterization**:  深入分析spam campaigns, 以进一步减少分析时长和工作量。我们连接不同的数据源，label 和 score campaigns,  帮助调查人员快速掌握的一个campaign的目的，有针对性的做处理。详细内容请看 Section 4.4
+
 ### Central database
 
 Due to the tremendous number of spam emails, NoSQL databases such as document-based ones are considered instead of the traditional SQL-based RDBMS. Document-oriented databases are acknowledged for their flexibility and high scalability. However, most of them do not have a powerful [query language](https://www.sciencedirect.com/topics/computer-science/query-languages) like SQL. Moreover, the ability to represent relationships between spam emails, spam campaigns, IP addresses and domain names is essential. These relationships can be stored and processed efficiently in a [graph database](https://www.sciencedirect.com/topics/computer-science/graph-database), which is based on [graph theory](https://www.sciencedirect.com/topics/computer-science/graph-theory). In our system, we employ *OrientDB* ([OrientDB, 2013](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib31)), which is an open-source NoSQL [database management system](https://www.sciencedirect.com/topics/computer-science/database-management-systems). OrientDB has the flexibility of document-based databases as well as the capability of graph-based ones for managing relationships between records. It has the advantages of being fast, scalable and supports SQL-styled queries. Spam emails are stored in the database as documents with different fields, such as header fields, textual content, embedded URL(s), etc. Additionally, spam campaigns, IP addresses, domain names and attachments are also saved as different document types. For each document type, the database maintains a [hash table](https://www.sciencedirect.com/topics/computer-science/hash-table) of a specific field to eliminate duplications. The database also stores the relationships between different documents, such as between spam emails and spam campaigns, spam emails and attachments or spam campaigns and IP addresses.
 
-### Parsing and feature extraction
+### 中心数据库
+
+为了存储大量的垃圾邮件，我们主要考虑的是诸如  文档数据库 这样的 NoSQL 数据库，而不是传统的关系型数据库。文档数据库以它们的灵活和高可拓展性出名，但是它们大多没有一个像SQL这样强大的查询语言，另外，表示数据关系也是我们的一个必要的需求，我们需要表示spam emails之间的关系，spam campaigns之间关系，IP 地址和域名之间的关系。这些关系可以用图数据库高效地存储和处理。我们的系统使用的是 OrientDB ([OrientDB, 2013](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib31)), 一个开源的NoSQL 数据库。
+
+### Parsing and feature extraction 
 
 Our parser takes spam emails, each of which consists of a header and a body, as its inputs. The header has many different fields, which are name/value pairs separated by “:”. The body may have only one part or multiple parts. Relevant features needed for the analysis are extracted. More precisely, we consider the following features:
 
@@ -179,72 +201,62 @@ Our parser takes spam emails, each of which consists of a header and a body, as 
 - •
 
   *Attachment Name(s)*: Each attachment name is considered as a feature.
+  
+  
 
+### 解析和特征提取 
 
+解析器获取spam emails 作为输入, email中包含 header 和 body。header 有很多个域，每个域都是一个：分割的键值对。body 可以由一个或多个部分。分析所需要的相关特征在这里被提取，主要考虑的特征有：
+
+- **内容类型**: header 中的 Content-Type域描述了email 的MIME类型：text/plain, text/html, application/octet-stream, multipart/alternative, multipart/mixed, multipart/related 和 multipart/report.
+- **字符集**: email 的编码格式可以从header 域或者 email正文中获取。编码格式大致表示了email的语言。spammer 很少混淆这个特征，因为如果解析器获取不到编码格式，email就无法被解码，收件人也就看不到email内容.
+- **标题**: 整个标题被看作一个特征，如果标题使用Q-encoding编码，将被解码成Unicode.
+- **Email 布局**: 
+  - 在text/plain 的情况下，布局是字符串“T”, “N” 和 “U”, 代表文本，新的一行 和URL；
+  - 在text/html 的情况下，布局是DOM 树的top 三层
+  - 在multipart emails 的情况下，我们使用email body的树形结构来组合 布局
+- **URL Tokens**:  email的 URL 被分解成各个Token: hostname, path, parameters, 每个token 当作一个特征
+- **附件名**: 每个附件名当作一个特征.
 
 ### Spam campaign detection
 
 Our spam campaign detection method is based on the *[Frequent-pattern](https://www.sciencedirect.com/topics/computer-science/frequent-patterns)* tree (FP-Tree) ([Han et al., 2000](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib15), [Han et al., 2004](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib16)). We employ the FP-Tree based on the premise that the more frequent an attribute is, the more it is shared among spam emails. Less frequent attributes usually correspond to the parts that are obfuscated by spammers. Thus, building an FP-Tree from email features allows spam emails to be grouped into campaigns. Furthermore, obfuscated features are discovered naturally within the FP-Tree and therefore exposing the strategies of spammers. Two scans of the dataset are needed to construct the FP-Tree. The cost of inserting a feature vector *fv* into the FP-Tree is O(*[Math Processing Error]|fv|*), where *[Math Processing Error]|fv|* indicates the number of features in *fv*. The FP-Tree usually has a smaller size than the dataset since feature vectors that share similar features are grouped together. Hence, this structure reduces the amount of data that needs to be processed. In the following, we present our FP-Tree-based spam campaign [detection algorithms](https://www.sciencedirect.com/topics/computer-science/detection-algorithm).
 
+### 检测spam campaign 
+
+我们的检测方法是基于FP-Tree，我们使用FP-Tree的前提是，属性越频繁，在spam emails 间共用的就越多。低频的属性通常与spammer做的混淆相关。因此，使用邮件特征构造 FP-Tree 可以将 spam email 分组到相应的 campaigns中；另外，混淆特征在 FP-Tree 中很自然的被发现，spammers的诡计被识破。构建 FP-Tree需要2次扫描数据集。将特征向量 fv 插入到 FP-Tree的成本是 O(|fv|)，其中， |fv|表示 fv 的特征值。FP-Tree 的大小通常小于数据集，因为共享相似特征的特征向量被分组到一起。因此，这种结构减少了要处理的数据量。接下来，我们将介绍基于 FP-Tree的 spam campaign 检测算法。
+
 #### Frequent-pattern tree construction
 
 We define two data structures, *FPTree* and *FPNode*:
 
-- •
+- The *FPTree* has one *root* and one method:
 
-  The *FPTree* has one *root* and one method:
+- The *root* is an *FPNode* labeled *null*.
 
-- –
+- The *add(transaction)* method (Algorithm 1) accepts a feature vector as its only parameter.
 
-  The *root* is an *FPNode* labeled *null*.
-
-- –
-
-  The *add(transaction)* method (Algorithm 1) accepts a feature vector as its only parameter.
 
 ![img](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-fx1.jpg)[Download : Download full-size image](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-fx1.jpg)
 
-- •
+- The *FPNode* has eight properties and two methods:
 
-  The *FPNode* has eight properties and two methods:
+- The *tree* property indicates the *FPTree* of this *FPNode*.
+- The *item* property represents the feature.
+- The *root* property is *True* if this *FPNode* is the root; *False* if otherwise.
+- The *leaf* property is *True* if this *FPNode* is a leaf; *False* if otherwise.
 
-- –
+- The *parent* property indicates the *FPNode* that is the parent of this *FPNode*.
 
-  The *tree* property indicates the *FPTree* of this *FPNode*.
+- The *children* property is a list of *FPNode*s that are the children of this *FPNode*.
 
-- –
+- The *siblings* property is a list of *FPNode*s that are the siblings of this *FPNode*.
 
-  The *item* property represents the feature.
+- The *add(node)* method adds the *FPNode* “node” as a child of this *FPNode* and adds this *FPNode* as the parent of the *FPNode* “node”.
 
-- –
+- The *search*(*item*) method checks to see if this *FPNode* has a child “item”.
 
-  The *root* property is *True* if this *FPNode* is the root; *False* if otherwise.
-
-- –
-
-  The *leaf* property is *True* if this *FPNode* is a leaf; *False* if otherwise.
-
-- –
-
-  The *parent* property indicates the *FPNode* that is the parent of this *FPNode*.
-
-- –
-
-  The *children* property is a list of *FPNode*s that are the children of this *FPNode*.
-
-- –
-
-  The *siblings* property is a list of *FPNode*s that are the siblings of this *FPNode*.
-
-- –
-
-  The *add(node)* method adds the *FPNode* “node” as a child of this *FPNode* and adds this *FPNode* as the parent of the *FPNode* “node”.
-
-- –
-
-  The *search*(*item*) method checks to see if this *FPNode* has a child “item”.
-
-
+- - 
 
 We build the FP-Tree by creating the *null FPNode*, which is the root of the tree, and adding the feature vectors individually. The features in each feature vector are sorted in descending order based on their occurrences in the dataset. Algorithm 2 comprehensively demonstrates this process.
 
@@ -253,6 +265,67 @@ We build the FP-Tree by creating the *null FPNode*, which is the root of the tre
 
 
 At the end, we obtain the FP-Tree, in which each node represents a feature extracted from spam emails. Each path from one leaf to the root represents the feature vector of each spam message. From the FP-Tree, we can see that two messages that have some common features share a portion of the path to the root. We use this characteristic to cluster spam emails, which have several common features, into campaigns.
+
+#### 构造 FP-Tree
+
+我们定义2个数据结构: **FPTree** 和 **FPNode**
+
+- *FPTree*  有一个 root 和一个方法
+  - root 是一个 值为null 的 FPNode 
+  - add 方法 接收一个特征向量 作为唯一的参数
+
+```
+function add(fv)
+	n <- root
+    for each f in fv do
+    	next n <- n.search(f)
+        if next n is None then
+        	next n <- New FPNode(f)
+            Add next n as a child of n
+        end if
+        n <- next.n
+    end for
+end function
+```
+
+- FPNode 有8个属性和2个方法
+  - tree  表示该FPNode 的 FPTree
+  - item 表示 特征
+  - root  bool, 标识 是否是root
+  - leaf   bool, 标识 是否是leaf
+  - parent 父节点
+  - children 子节点列表   list<FPNodes>  
+  - siblings  兄弟节点列表  list<FPNodes>  
+  - add(node)  添加一个子节点
+  - search(item) 查找本节点是否有item
+
+我们通过创建  FPnode(null) 来构建 FP-Tree, FPnode(null) 是树的root, 然后一个个地添加特征向量。每个特征向量的特征按添加到数据集的时间降序排列。Algorithm 2  全面展示了这个过程
+
+```R
+#An empty list structure
+Transactions <- () 
+# An empty key,value map
+items <- {}
+for each spam email do
+	# An empty list 
+	feature_vector <-()
+		Add feature to freature_vector
+		item{feature} <- items[feature]+1
+	end for
+    Add spam_email_ID to the end of feature_vector
+	Add feature_vector to Transactions
+end for
+the_fp_tree <- FPTree()
+for each transaction in Transactions do
+	if {transaction} > 2 then
+		# THe content_type at the beginning and the spam_email_ID at the end are omitted
+		Sort(descending) the items in translation[1:-1] base on their counts in items
+		the_fp_tree(trans)
+	end if
+end for
+```
+
+
 
 #### Spam campaign identification
 
@@ -280,43 +353,51 @@ If a node satisfies all of the above conditions, all the leaves of the sub-tree 
 
 The FP-Tree technique is very efficient and naturally reveals the features that are common in the spam emails of a campaign as well as the features that are obfuscated by spammers ([Calais et al., 2008](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib5)). However, the disadvantage of this technique is that it only works with a static set of data. It has been demonstrated that spam campaigns may last for a long period of time ([Pathak et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib32)). Consequently, the ability to identify spam campaigns in their early stage gives investigators an upper hand in their pursuit of the spammers. We improve our FP-Tree-based spam campaign [identification algorithm](https://www.sciencedirect.com/topics/computer-science/identification-algorithm) by constructing the FP-Tree on-the-fly. We extract feature vectors from spam emails as soon as they arrive and insert those vectors into the tree. In the following, we provide more details about this process.
 
+#### Spam campaign identification
+
+构建 FP-Tree 后，我们通过深度优先遍历提取 spam campaigns。当我们访问每个节点是，我们检查以下条件：
+
+1. 子节点的个数必须大于 **min_num_children**
+2. 子节点的平均频数必须大于 **freq_threshold**
+3. 从当前节点到root节点的路径上，不能存在没有 **n_obf_features** 中特性 的节点。 
+4. 以当前节点为根节点的子树，叶子节点个数必须大于 **min_num_messages**
+
+如果一个节点满足以上所有条件，以该节点根节点的子树，子树上的所有叶子节点属于同一个 spam campaign：
+
+1. 保存该campaign
+2. 删除该子树
+3. 继续遍历直到所有的节点都被访问。
+
+FP-Free 算法 非常有效，可以很好地识别一个 campaign 中共有的特征和spammer加的混淆特征。但是，这个算法的缺点是只能用在静态数据集中，比较适用于持续长时间的spam campaign。因此，能够掌握早期的spam campaign的相关证据 ，为调查人员追查发件人提供帮助。我们通过动态构造FP-Tree来提高 FP-Tree spam campaign 识别算法。一收到 spam emails,我们紧接着就提取特征向量并插入到FP_Tree。下面，我们将对这个流程详细介绍。
+
 #### Incremental FP-Tree
 
 Since the FP-Tree approach ([Han et al., 2000](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib15), [Han et al., 2004](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib16)) was proposed for [mining frequent patterns](https://www.sciencedirect.com/topics/computer-science/mining-frequent-pattern), many studies have been conducted to improve the functionality ([Kai-Sang Leung, 2004](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib20)) as well as the performance ([Ong et al., 2003](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib30)) of this technique. Moreover, some FP-Tree-based incremental mining algorithms have been proposed ([Cheung and Zaiane, 2003](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib6), [Leung et al., 2007](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib26)). We adopt the ideas from ([Cheung and Zaiane, 2003](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib6)) to construct the incremental FP-Tree as follows:
 
-- 1.
+- 1.Create a *null* root.
+- 2.Each new transaction is added starting from the root level.
+- 3.At each level:
 
-  Create a *null* root.
+  - (a)The items of the new transaction are compared with the items of the children nodes.
 
-- 2.
+  - (b)If the new transaction and the children nodes have items in common, the node having the highest count is chosen to merge with the item in the transaction. Thus, the count of that node is increased by 1. The item of the merged node is then removed from the transaction. If the count of a [descendant node](https://www.sciencedirect.com/topics/computer-science/descendant-node) becomes higher than the count of its ancestor, the descendant node has to be moved in front of its ancestor and merged with the item in the transaction.
 
-  Each new transaction is added starting from the root level.
+  - (c) This process is repeated recursively with the remainder of the new transaction.
+- 4.Any remaining items in the new transaction are added as a new branch to the last merged node.
+- 5.Run the spam campaign detection process regularly to detect new campaigns or merge with the existing ones.
 
-- 3.
+### 增量 FP-Tree
 
-  At each level:
+自从  FP-Tree 方法 被提出后，很多研究都在致力于提高其功能和性能。另外，也有一些基于 FP-Tree 的增量提取算法被提出。我们参考了 ([Cheung and Zaiane, 2003](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib6)) 的思路，按如下流程构建增量FP-Tree：
 
-- (a)
-
-  The items of the new transaction are compared with the items of the children nodes.
-
-- (b)
-
-  If the new transaction and the children nodes have items in common, the node having the highest count is chosen to merge with the item in the transaction. Thus, the count of that node is increased by 1. The item of the merged node is then removed from the transaction. If the count of a [descendant node](https://www.sciencedirect.com/topics/computer-science/descendant-node) becomes higher than the count of its ancestor, the descendant node has to be moved in front of its ancestor and merged with the item in the transaction.
-
-- (c)
-
-  This process is repeated recursively with the remainder of the new transaction.
-
-- 4.
-
-  Any remaining items in the new transaction are added as a new branch to the last merged node.
-
-- 5.
-
-  Run the spam campaign detection process regularly to detect new campaigns or merge with the existing ones.
-
-
+1. 创建一个 null root
+2. 每个新的事务被添加到 root 层 的开头
+3. 在每一层：
+   1. 新事务的items 与 子节点的items进行比较
+   2. 如果拥有相同的items,  有更大count的节点将新事务上的这个items合并。所有，该节点的count +1 ；被合并到节点的items 从新事务中删除。如果 后代节点的count > 其祖先的count,则后代节点必须移到其祖先的前面，将 新事务的 item 合并。
+   3. 这个流程递归地执行，直到新事务所有的item被比较。
+4. 新事物中的所有剩余items 作为新分支添加到最后合并的节点。
+5. spam campaign 检测流程 定期执行，以检测新的  spam campaign 或者 合并到已存在的 spam campaign。
 
 ### Spam campaign characterization
 
