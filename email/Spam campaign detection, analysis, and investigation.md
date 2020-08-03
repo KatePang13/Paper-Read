@@ -24,7 +24,7 @@ open access
 
 Spam has been a major tool for criminals to conduct illegal activities on the Internet, such as stealing [sensitive information](https://www.sciencedirect.com/topics/computer-science/sensitive-informations), selling counterfeit goods, distributing malware, etc. The astronomical amount of spam data has rendered its manual analysis impractical. Moreover, most of the current techniques are either too complex to be applied on a large amount of data or miss the extraction of vital security insights for forensic purposes. In this paper, we elaborate a software framework for spam campaign detection, analysis and investigation. The proposed framework identifies spam campaigns on-the-fly. Additionally, it labels and scores the campaigns as well as gathers various information about them. The elaborated framework provides [law enforcement officials](https://www.sciencedirect.com/topics/computer-science/law-enforcement-official) with a powerful platform to conduct investigations on cyber-based criminal activities.
 
-垃圾邮件已经成为违法犯罪分子在互联网上开展非法活动的主要手段之一，比如贩卖敏感信息，销售假货，散布恶意软件等。人工分析对于如此庞大数量级的垃圾信息已经杯水车薪。而且，现在的技术要么过于复杂，需要依赖大量的数据，要么无法提取证据供司法调查使用（miss the extraction of vital security insights for forensic purposes）。在本文中，我们介绍一种针对垃圾邮件行为的探测，分析，调查的软件架构。本框架可以做到及时标记垃圾邮件行为，并基于相关的多种信息对垃圾级邮件行为进行Labels(标记分类)和Scores(计分)。本框架为执法人员（https://www.sciencedirect.com/topics/computer-science/law-enforcement-official）提供了一个强大的平台，可以对网络在的犯罪活动进行调查。
+垃圾邮件已经成为违法犯罪分子在互联网上开展非法活动的主要手段之一，比如贩卖敏感信息，销售假货，散布恶意软件等。人工分析对于如此庞大数量级的垃圾信息已经杯水车薪。而且，现在的技术要么过于复杂，需要依赖大量的数据，要么不够深入，无法供司法调查使用（miss the extraction of vital security insights for forensic purposes）。在本文中，我们介绍一种针对垃圾邮件行为的探测，分析，调查的软件架构。本框架可以做到及时标记垃圾邮件行为，并基于相关的多种信息对垃圾级邮件行为进行Labels(标记分类)和Scores(计分)。本框架为执法人员（https://www.sciencedirect.com/topics/computer-science/law-enforcement-official）提供了一个强大的平台，可以对网络在的犯罪活动进行调查。
 
 ## Keywords
 
@@ -42,15 +42,44 @@ Frequent pattern tree
 
 Electronic mail, or most commonly known as *email*, is ubiquitous and so is its abusive usage. *Spam emails* affect millions of users, waste invaluable resources and have been a burden to the email systems. For instance, according to Symantec Intelligence Report, the global ratio of spam in email traffic is 71.9% ([Symantec Intelligence Report, 2013](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib38)). Furthermore, adversaries have taken advantage of the ability to send countless emails anonymously, at the speed of light, to carry on vicious activities (e.g., advertising of fake goods or medications, scams causing financial losses) or even more severely, to commit cyber crimes (e.g., child pornography, identity theft, phishing and malware distribution). Consequently, spam emails contain priceless cyber security intelligence, which may unveil the world of cyber criminals.
 
-电子邮件 无处不在，对电子邮件的滥用也无处不在。垃圾邮件几乎影响着我们每个人，大量占用资源，已然成为邮件系统的巨大负担。根据 Symantec Intelligence 的报告，全球邮件总量中，垃圾邮件占比 71.9%([Symantec Intelligence Report, 2013](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib38)).。此外，攻击者可以非常快速的发送无限量的匿名邮件，开展各种活动(宣传假货假药，商业诈骗)，甚至是实施网络犯罪（传播儿童色情，盗取个人信息，推送恶意软件）。因此，垃圾邮件蕴含着无价的网络安全情报，或许可以揭开网络罪犯世界的线索。
+电子邮件 无处不在，对电子邮件的滥用也无处不在。垃圾邮件困扰着无数人，大量了占用资源，已然成为邮件系统的巨大负担。根据 Symantec Intelligence 的报告，全球邮件总量中，垃圾邮件占比 71.9%([Symantec Intelligence Report, 2013](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib38)).。此外，攻击者可以非常快速的发送无限量的匿名邮件，开展各种活动(宣传假货假药，商业诈骗)，甚至是实施网络犯罪（传播儿童色情，盗取个人信息，推送恶意软件）。因此，垃圾邮件蕴含着无价的网络安全情报，或许可以揭开网络罪犯世界的神秘面纱。
 
 Spam data has been used extensively in various studies to detect and investigate cyber threats such as [botnets](https://www.sciencedirect.com/topics/computer-science/botnets) ([Zhuang et al., 2008](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib43), [Xie et al., 2008](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib42), [John et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib19), [Pathak et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib32), [Thonnard and Dacier, 2011](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib39), [Stringhini et al., 2011](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib37)) and [phishing attacks](https://www.sciencedirect.com/topics/computer-science/phishing-attack) ([Fette et al., 2007](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib11), [Bergholz et al., 2008](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib2), [Moore et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib29), [Bergholz et al., 2010](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib3)). Moreover, the accessibility of various data sources, which can be correlated to complement their incompleteness, has brought new opportunities and challenges to researchers. Unfortunately, most studies either use a single data source or work on a static spam data that is collected during a specific time frame ([Pitsillidis et al., 2012](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib34)). More importantly, [spammers](https://www.sciencedirect.com/topics/computer-science/spammer) have been constantly modernizing their arsenals to defeat the anti-spam efforts. Spamming techniques have evolved remarkably from simple programs to sophisticated spamming software, which disseminate template-generated spam through a network of compromised machines. Botnet-disseminated spam emails are usually orchestrated into large-scale campaigns and act as the pivotal instrument for several cyber-based criminal activities. As a consequence, it is critical to perform an analysis of spam data, especially *spam campaigns*, for the purpose of cyber-crime investigation. Nevertheless, given the stunning number of spam emails, it is implausible to analyze them manually. Therefore, cyber-crime investigators need automatic techniques and tools to accomplish this task.
 
+已经有很多使用垃圾邮件数据来检测和调查网络威胁的研究，比如
+
+- [botnets](https://www.sciencedirect.com/topics/computer-science/botnets) ([Zhuang et al., 2008](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib43), [Xie et al., 2008](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib42), [John et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib19), [Pathak et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib32), [Thonnard and Dacier, 2011](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib39), [Stringhini et al., 2011](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib37)) 
+-  [phishing attacks](https://www.sciencedirect.com/topics/computer-science/phishing-attack) ([Fette et al., 2007](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib11), [Bergholz et al., 2008](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib2), [Moore et al., 2009](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib29), [Bergholz et al., 2010](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib3))
+
+另外，很多相关数据源的权限开放，也为研究者们带来了新的机遇和挑战。不幸的是，大多数研究者要么只使用单一的数据源，要么只针对一个特定时间段的垃圾邮件做研究([Pitsillidis et al., 2012](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib34))。 更重要的是， spammers 一直在不断的更新武器，刺穿反垃圾系统的盾。垃圾邮件技术已经从简单的程序进化成了相当智能的spamming 软件, 可以从多台机器散布模板生成的垃圾邮件。僵尸网络传播的垃圾邮件通常被组织成大规模的活动，已然是很多网络犯罪活动的主要手段。因此，spam 数据分析是迫切需要的，特别是 spam campaign分析，以供网络犯罪调查。但是数量巨大的垃圾邮件，人工分析是不现实的，所以，网络犯罪调查人员需要自动化的技术和工具来完成这项任务。
+
 In this research, we aim at elaborating methodologies for spam campaign detection, analysis and investigation. We also emphasize the importance of correlating different data sources to reveal spam campaign characteristics. More precisely, we propose a framework that: (1) Consolidates spam emails into campaigns. (2) Labels spam campaigns by generating related topics for each campaign from Wikipedia data. (3) Correlates different data sources, namely *passive DNS*, malware, WHOIS information and geo-location, to provide more insights into spam campaign characteristics. (4) Scores spam campaigns based on several customizable criteria.
+
+在这项研究中，我们旨在阐述垃圾邮件活动检测，分析和调查的方法，我们同时强调了聚合多数据源对提取垃圾邮件活动特征的重要性。在实践上，我们提供可一种框架：
+
+1. 将spam email 分组到 各个 campaign 中。【译者注：发送大量类似的垃圾邮件，将这些邮件归类为一个spam campaign，后文都用英文表示】
+2. 使用标签标记spam campaigns, 根据每个campaign相关的条目，生成 Labels ,条目来自 Wikipedia
+3. 关联不同的数据源，比如 被动DNS, 恶意软件，WHOIS 和 地理位置信息，更深入地提炼 spam campaign 的特征。
+4. 根据一些自定义的标准对垃圾邮件活动进行评分
 
 The identification of spam campaigns is a crucial step for analyzing spammers' strategies for the following reasons. First, the amount of spam data is astronomical, and analyzing all spam messages is costly and almost impossible. Hence, clustering spam data into campaigns reduces significantly the amount of data to be analyzed, while maintaining their key characteristics. Second, because of the characteristics of spam, spam messages are usually sent in bulk with specific purposes. Hence, by clustering spam messages into campaigns, we can extract relevant insights that can help investigators understand how spammers obfuscate and disseminate their messages. Labeling spam campaigns and correlating different data sources reveal the characteristics of the campaigns and therefore, significantly increase the effectiveness of an investigation. Moreover, scoring spam campaigns helps investigators concentrate on campaigns that cause more damage (e.g., malware distribution or phishing).
 
+标识 spam campaigns 是分析 spammer 发件人的关键步骤，原因如下：
+
+1. spam 的数量是巨大的，分析所有的spam 几乎是不可能的。因此，将spam 聚类到campaigns 可以明显的减少需要分析的数据量，同时维护每个campaign的关键特征。
+2. 圾邮件通常以特定目的批量发送，通过聚合spams到campaigns，我们可以更深入的提取相关内在特征，帮助调查人员弄清楚 spammers 是怎么混淆和传播 消息的。
+3. 标记spam campaigns 和 关联相关的多方数据，可以揭露campaigns 的特征，显著提高调查的效率
+4. 给 spam campaigns 评分可以帮助 调查者 专注于那些更危险的campaigns（比如传播恶意软件，钓鱼邮件）。
+
 The remainder of this paper is organized as follows. In Section [2](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec2), we present the related work. We discuss existing techniques for detecting spam campaigns in Section [3](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec3). In Section [4](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4), we present our framework. Experimental results are presented in Section [5](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec5). Finally, we conclude the paper in Section [6](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec6).
+
+本文的剩余部分的组织形式：
+
+- Section 2. 介绍相关的研究工作
+- Section 3. 讨论现有的 spam campaigns 检测技术 
+- Section 4. 介绍软件架构
+- Section 5. 展示实验结果
+- Section 6. 总结
 
 ## Related work
 
@@ -118,43 +147,27 @@ As depicted in [Fig. 1](https://www.sciencedirect.com/science/article/pii/S17422
 
 框架的主要模块如下图所示：
 
-- •
-
-  *Central Databas*e
-
 
 
 ![img](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr1.jpg)[Download : Download full-size image](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr1.jpg)Fig. 1. Architecture of our software framework.
 
+- *Central Database*
+
 The database is carefully chosen so that it is scalable, flexible and able to store relationships between different entities. Section [4.1](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.1) elucidates our choice.
 
-中心数据库：数据库是经过精心选择的，以满足 可拓展，灵活，关系型数据的需求。Section 4.1 将详细描述。
-
-- •
-
-  *Parsing and Features Extraction*
-
-
+- *Parsing and Features Extraction*
 
 This component parses spam emails, extracts and stores their features in the central database for further analysis. More details about this component are given in Section [4.2](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.2).
 
 
 
-- •
-
-  *Spam Campaign Detection*
-
-
+- *Spam Campaign Detection*
 
 This module takes the features from the central database as its inputs, identifies spam campaigns and saves them back into the database. Section [4.3](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.3) explains this module thoroughly.
 
 
 
-- •
-
-  *Spam Campaign Characterization*
-
-
+- *Spam Campaign Characterization*
 
 This component gives insights into spam campaigns to further reduce the analysis time and effort. We combine different data sources, label and score spam campaigns to help investigators quickly grasp the objective of a campaign and concentrate on what they are after. This component is described in detail in Section [4.4](https://www.sciencedirect.com/science/article/pii/S1742287615000079#sec4.4).
 
@@ -274,7 +287,7 @@ At the end, we obtain the FP-Tree, in which each node represents a feature extra
   - root 是一个 值为null 的 FPNode 
   - add 方法 接收一个特征向量 作为唯一的参数
 
-```
+```R
 function add(fv)
 	n <- root
     for each f in fv do
@@ -386,7 +399,7 @@ Since the FP-Tree approach ([Han et al., 2000](https://www.sciencedirect.com/sci
 - 4.Any remaining items in the new transaction are added as a new branch to the last merged node.
 - 5.Run the spam campaign detection process regularly to detect new campaigns or merge with the existing ones.
 
-### 增量 FP-Tree
+#### 增量 FP-Tree
 
 自从  FP-Tree 方法 被提出后，很多研究都在致力于提高其功能和性能。另外，也有一些基于 FP-Tree 的增量提取算法被提出。我们参考了 ([Cheung and Zaiane, 2003](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib6)) 的思路，按如下流程构建增量FP-Tree：
 
@@ -403,25 +416,45 @@ Since the FP-Tree approach ([Han et al., 2000](https://www.sciencedirect.com/sci
 
 Grouping spam emails into campaigns has greatly reduced the amount of data that needs to be analyzed. However, when examining a specific spam campaign, an investigator still needs to skim through a significant number of spam emails to grasp the essential information. Therefore, a summary of the spam content is valuable to the investigator. We employ techniques to automatically label spam campaigns to give the investigator an overall view of them. We also develop a scoring mechanism to rank spam campaigns so that the investigator can concentrate on the highly-ranked ones. Additionally, spam campaigns may reveal some characteristics that are hidden when analyzing spam emails separately. For example, the relationships between different domains and IP addresses or between spamming servers. Therefore, we utilize and correlate various kinds of information, such as WHOIS information, passive DNS data, geo-location and malware database, to assist investigators in tracing spammers. Moreover, we employ visualization tools to illustrate the relationships between spam emails, spam campaigns, domains and IP addresses. The visualization helps to emphasize critical information in the dataset, for instance, an aggressive spamming IP address. In the following, we provide more details about our characterization methods.
 
+### Spam campaign特征
+
+spam emails 分组到相应的campaigns  已经大大降低了需要分析的数据量。但是，当调查员需要针对一个特定的campaigns做分析时，仍然需要浏览一定数量的邮件来掌握基本信息。所以，spam的摘要信息对于调查员是有价值的。我们使用技术手段来自动给spam campaign 贴上标签，为调查员提供一个总览的视角。我们同时开发了一个打分机制给spam campaigns 作排名，这样调查员就可以专注于更高优先级的的campaign。另外，spam campaign 也可以揭露一些在对邮件单独分析时得不到的内在特征。例如，不同域名，不同IP地址或者不同服务器之间的关系。因此，我们聚合来自多方的数据来帮助调查员来追踪 spammer，比如WHOIS信息，被动DNS数据，geo-location 和 恶意软件数据库。另外，我们使用可视化工具来展示不同 spam emails, spam campaigns，domains, IP addresses 之间的关系。可视化帮助我们 突出 数据集中的 关键信息，比如一个活跃的 spamming IP地址。接下来，我们会详细论述我们的characterization 方法。
+
 #### Correlation module
 
 In this module, we utilize WHOIS information ([Harrenstien et al., 1985](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib17), [Daigle, 2004](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib8)) and passive DNS data, received from a trusted third party, to gain more insights into the domain names found in spam emails. WHOIS information is associated with each second-level domain while passive DNS data gives the historical relationships between hostnames and IP addresses along with their time-stamps. In addition, we use geo-location and malware data to add valuable information to the IP addresses that we have found in spam campaigns. The IP addresses can be extracted from the Received header fields or from the passive DNS data.
+
+#### 关联关系模块
+
+在这个模块，我们使用 来自 权威第三方的 WHOIS 信息 和被动 DNS 信息，来深入分析spam emails中的 域名。WHOIS信息与每个第二级域相关联，而被动DNS数据提供了主机名和IP地址之间的历史关系以及它们的时间戳。另外，我们使用地理位置信息和恶意软件信息来将更多有用的信息添加到spam campaign的IP地址上。IP地址可以从接收的header 域中提取，或者根据 被动DNS数据的信息。
 
 #### Spam campaign labeling
 
 We propose techniques for labeling spam campaigns to provide an overview of their content. First, we employ an automatic labeling technique that has been proposed by Lau et al. ([Lau et al., 2011](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib25)). Even though this method works in some cases, it is not scalable because of the large number of queries to Wikipedia. Thus, we apply another method that utilizes *Wikipedia Miner toolkit* ([Milne and Witten, 2013](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib28)), which stores summarized versions of Wikipedia in offline databases. We create a *Spam Campaign Labeling Server*, which listens to a specific network port, using the libraries from Wikipedia Miner toolkit. We extract frequent words from the content of spam emails in a campaign and feed them to the *Spam Campaign Labeling Server*. The response, which contains a list of relevant topics of that spam campaign, is saved back into the central database.
 
+#### Spam campaign 标签
+
+我们通过标记 spam campaigns 来提供对内容的概览。一开始，我们使用Lau et al. ([Lau et al., 2011](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib25)) 提出的自动标记技术。尽管在某些场景下是有效的，但是因为需要大量的查询Wikipedia，拓展性极差。因此，我们使用基于 *Wikipedia Miner toolkit* ([Milne and Witten, 2013](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib28))的方法，在离线数据库存储Wikipedia 的概要信息。我们基于Wikipedia Miner toolkit 的库搭建了一个 *Spam Campaign Labeling Server*，该服务监听一个特定的端口。我们从同一个campaign 中的 spam emails 内容中提取高频词，并提交到 *Spam Campaign Labeling Server*，响应信息中，包含一个该spam campaign的相关topic的列表，我们将这个列表存储到中心数据库。
+
 #### Spam campaign scoring
 
 In most cases, investigators only need to pursue a particular objective in their investigations. Therefore, we suggest a method that has been verified by a [law enforcement official](https://www.sciencedirect.com/topics/computer-science/law-enforcement-official) to assign each spam campaign a score. The score of each campaign is determined by the sum of various weighted elements. Each element is the count of an attribute, a characteristic or a signal that may appear in spam emails of a campaign. For example, an investigator who is interested in spammers targeting Canadians may want to put more effort into spam campaigns that have “.ca” domain names in the email addresses of the recipients. We implement the attributes both from our speculation and from the advice of a Canadian law enforcement official. Some of the signals are Canadian IP addresses, “.ca” top-level domain names, IP ranges of Canadian corporations, etc.
+
+#### spam campaign 计分
+
+大多数场景中，调查者只需要 探究 被调查者的一个特定的目标。因此，我们提出了一种方法来为每个spam campaign 计分，每个spam campaign的分数由一系列加权的因素累加得到。每个元素都是同一次campaign中的spam emails 可能出现的属性，特征或信号的计数。比如，一个调查者对攻击加拿大的spammers感兴趣，他可能希望重点关注收件人域名是 ".ca" 的 spam campaigns。我们根据推测和加拿大执法人员的建议来实现各种属性值，其中一些信号是加拿大的IP地址，“.ca” 顶级域名 和  加拿大企业的 IP 范围。
 
 ## Results
 
 In this section, we present the results of our spam campaign analysis. We also show some visualizations that can provide investigators with a spectacular view of the spam campaigns to further understand the behaviors of [spammers](https://www.sciencedirect.com/topics/computer-science/spammer).
 
+在本节，我们主要展示 spam campaign分析 的成果，并且展示了一些提供给调查人员的可视化材料，展示spam campaign的全貌，帮助相关人员更好的理解spammers的行为习惯。
+
 ### The dataset
 
 [Table 1](https://www.sciencedirect.com/science/article/pii/S1742287615000079#tbl1) shows some statistics of our spam dataset that we received from a trusted third party. [Table 2](https://www.sciencedirect.com/science/article/pii/S1742287615000079#tbl2) and [Table 3](https://www.sciencedirect.com/science/article/pii/S1742287615000079#tbl3) depict the distribution of the spam email MIME types. The MIME type and the character set are rarely obfuscated by spammers. However, spam messages may not follow the standard rules, which leads to the appearance of some non-standard MIME types. This valuable signal can be used to detect spam emails that are generated by the same automatic mean. The distribution of the correct MIME types is shown in [Table 4](https://www.sciencedirect.com/science/article/pii/S1742287615000079#tbl4).
+
+Table1 展示了我们从可信第三方拿到的 spam 数据集的统计数据。Table 2 和 Table 3 展示了  spam email  MIME 类型的分布情况。MIME type 和 字符集 一般很少会做混淆，但是也出现了少数非标准的MIME type。这个有用的信号可以被用来检测用自动化工具生成的 spam emails。准确的  MIME types 分布在 Table4 展示。
 
 Table 1. Statistics of the dataset.
 
@@ -494,11 +527,15 @@ Table 4. Distribution of the correct MIME types.
 
 [Fig. 2](https://www.sciencedirect.com/science/article/pii/S1742287615000079#fig2) depicts a full FP-Tree that is built using a *one-day* spam data ([Data-Driven Documents](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib10)) ([CodeFlower Source code visualization](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib7)). This figure clearly shows groups of nodes inside the FP-Tree, proving that the spam emails can be grouped into spam campaigns by using the FP-Tree structure. [Fig. 3](https://www.sciencedirect.com/science/article/pii/S1742287615000079#fig3) illustrates a part of the FP-Tree that we have built ([Data-Driven Documents](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib10)). The node labeled “*TTTTTNN*” represents the layout of the emails. We can clearly see that all the spam emails of the campaign share the same MIME type (“*text/plain*”), the same character set (“*windows-1250*”) and the same layout (“*TTTTTNN*”). However, they have different subject lines although those subjects have the same meaning (about stock markets).
 
+图2 展示了 一个完整 的 FP-Tree，它是由一天的 spam数据生成的。  ([Data-Driven Documents](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib10)) ([CodeFlower Source code visualization](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib7)). 这个图片清晰地展示了 节点的分组情况，证实了 spam emails 是可以用 FP-Tree 分组成  spam campaigns 的。节点  “*TTTTTNN*”  代表 emails 的局部，我们可以清晰的看到每个campaign下的所有spam emails，它们可能有相同的MIME type (“*text/plain*”)，相同的字符集 (“*windows-1250*”)  或者相同的布局  (“*TTTTTNN*”)。 虽然它们的标题不一样，但是都是表达一样的意思。
+
 ![img](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr2.jpg)[Download : Download full-size image](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr2.jpg)Fig. 2. Visualization of the FP-Tree constructed from a one-day spam data.
 
 ![img](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr3.jpg)[Download : Download full-size image](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr3.jpg)Fig. 3. Visualization of one part of the [frequent-pattern](https://www.sciencedirect.com/topics/computer-science/frequent-patterns) tree.
 
 [Table 5](https://www.sciencedirect.com/science/article/pii/S1742287615000079#tbl5) shows the time needed to extract spam campaigns from our dataset. The program runs on a server that has the Intel® Xeon® X5660 (2.80 GHz) CPU and 32 GB of memory. The most time-consuming task is the parsing of spam email files to insert into the main database (around 3 h for one-year data and 40 min for one-month data). The remaining steps only take around 5 min for one-year data and 1 min 30 s for one-month data to complete. We use one-year data just to demonstrate the efficiency of the FP-Tree method. The following sections present the results using one-month data.
+
+Table5 展示了从数据集中提炼 campaigns 需要的时间花销。该程序在一个  Intel® Xeon® X5660 (2.80 GHz) CPU 和 32 GB 内存的机器上运行。最耗时的任务是解析邮件并插入到主数据库中（一年的数据大约需要3小时，一个月的数据大约需要40分钟）。其他的步骤花费时间很少，一年的数据只需要5分钟，一个月的数据只需要30秒。我们使用一年的数据来展示 FP-Tree 方法的效率。接下来，我们将用一个月的数据来展示得到的结果。
 
 Table 5. Processing time.
 
@@ -513,13 +550,14 @@ Table 5. Processing time.
 
 In [Table 6](https://www.sciencedirect.com/science/article/pii/S1742287615000079#tbl6), we show the critical features that are used to identify spam campaigns. Moreover, we perform a more in-depth analysis of the relation between the decisive features and the parameters of our spam campaign [detection algorithm](https://www.sciencedirect.com/topics/computer-science/detection-algorithm). The process is as follows:
 
-- •
+Table 展示了我们用来标识spam campaigns的主要特征的分布情况，另外，我们做了一个更深入的分析， 研究决定因素和我们的spam campaign 检测算法之间的关系。流程如下所示：
 
-  First, the *min_num_messages* parameter is fixed to 5.
+- First, the *min_num_messages* parameter is fixed to 5.
 
-- •
-
-  For each step, the *min_num_children* parameter is increased by 1 (from 2 to 20). The number of detected spam campaigns corresponding to the decisive features are recorded 8 times (when the *freq_threshold* parameter is set to 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 and 5.0, respectively). The *freq_threshold* of 1.5 means that the average frequency of the children nodes is larger or equal to 1.5 times the frequency of the current node.
+- For each step, the *min_num_children* parameter is increased by 1 (from 2 to 20). The number of detected spam campaigns corresponding to the decisive features are recorded 8 times (when the *freq_threshold* parameter is set to 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 and 5.0, respectively). The *freq_threshold* of 1.5 means that the average frequency of the children nodes is larger or equal to 1.5 times the frequency of the current node.
+- 首先，*min_num_messages*  参数固定为5
+- 在每一步中，*min_num_children*  参数自增1（2 到 20）。记录检测到的spam campaigns 数量与 决定性特征的关系，总共记录8次（当 *freq_threshold*  值为 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0 时）。
+  - *freq_threshold*  = 1.5 意味着着 子节点的平均频数 >= 当前节点频数的1.5倍。
 
 
 
@@ -542,11 +580,21 @@ The results of this analysis are shown in [Fig. 4](https://www.sciencedirect.com
 
 After spam campaigns have been identified using the FP-Tree, we calculate the text similarity scores of each campaign. We apply three measurements to generate three similarity scores of all the email pairs in each campaign: *w-shingling* and the [Jaccard coefficient](https://www.sciencedirect.com/topics/computer-science/jaccard-coefficient) ([Broder et al., 1997](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib4)), *Context Triggered Piecewise Hashing* (CTPH) ([Kornblum, 2006](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib23)) and *[Locality-Sensitive Hashing](https://www.sciencedirect.com/topics/computer-science/locality-sensitive-hashing)* (LSH) ([Damiani et al., 2004](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib9)). A spam campaign has three similarity scores, each of which is the average score of each method. [Fig. 5](https://www.sciencedirect.com/science/article/pii/S1742287615000079#fig5) shows the results of this process. The vertical axis represents the score of each metric while the horizontal axis is the campaigns sorted by their scores. [Table 7](https://www.sciencedirect.com/science/article/pii/S1742287615000079#tbl7) summarizes the results.
 
+当spam campaigns 被 FP-Tree 标识之后，我们计算每个campaigns 的文本相似性值，我们使用三种衡量算法来生成每一个campaign中 所有 email 对的相似值：
+
+*w-shingling* and the [Jaccard coefficient](https://www.sciencedirect.com/topics/computer-science/jaccard-coefficient) ([Broder et al., 1997](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib4))
+
+*Context Triggered Piecewise Hashing* (CTPH)， ([Kornblum, 2006](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib23))
+
+ *[Locality-Sensitive Hashing](https://www.sciencedirect.com/topics/computer-science/locality-sensitive-hashing)* (LSH) ， ([Damiani et al., 2004](https://www.sciencedirect.com/science/article/pii/S1742287615000079#bib9))
+
+一个spam campaign有三个相似值，分别时每种方法的平均值。图5展示了处理的结果。纵坐标代表 每个指标的score，横坐标表示 按 score 排列的campaigns，Table 7 是对结果的汇总
+
 ![img](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr5.jpg)[Download : Download full-size image](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr5.jpg)Fig. 5. Spam campaign text similarity scores.
 
 Table 7. Summary of campaign text similarity scores.
 
-|         | w-s  | CTPH   | LSH  |        |      |        |
+|         | w-s  |        | CTPH |        | LSH  |        |
 | ------- | ---- | ------ | ---- | ------ | ---- | ------ |
 | >=50%   | 598  | 54.96% | 595  | 54.69% | 859  | 78.95% |
 | 100%    | 265  | 24.36% | 206  | 18.93% | 260  | 23.90% |
@@ -555,9 +603,13 @@ Table 7. Summary of campaign text similarity scores.
 
 Calculating text similarity between messages in each spam campaign is a very time-consuming process. It takes 13,339.6 s (around 3 h 42 min), 3942.5 s (around 65 min) and 584,486 s (nearly one week) to complete the calculation of the w-shingling method, the Context Triggered Piecewise Hashing method and the Locality-Sensitive Hashing method, respectively.
 
+在邮件之间计算文本相似度是非常耗时的，这三种方法分别花了 13,339.6 s (around 3 h 42 min), 3942.5 s (around 65 min) and 584,486 s (nearly one week) 。
+
 ### Spam campaign characterization
 
 In this subsection, we present some characteristics of the spam campaigns identified from a one-month data. In [Fig. 6](https://www.sciencedirect.com/science/article/pii/S1742287615000079#fig6), we show the spam campaigns along with the spam messages, the related IP addresses and the related hostnames. We select top 5 spam campaigns (with big numbers in the figure) that have the highest scores and have less than 1000 messages for the purpose of this illustration. The scores are computed based on some criteria that have been mentioned in our spam campaign scoring method. In [Fig. 7](https://www.sciencedirect.com/science/article/pii/S1742287615000079#fig7), a word cloud, which illustrates the topics of the spam campaigns, is presented.
+
+在本节，我们展示了一些spam campaigns的特征，这些spam campaigns的数据源是一个月的数据。图6展示了 spam campaigns 和其 spam messages，相关IP地址，相关域名。我们挑选了score最高的和少于1000封邮件的 top5  spam campaigns (图中用大数字标出)。score 值的计算方法是基于我们介绍过的 spam campaign scoring 方法。图7 是一个 词条云，展示了所有的 spam campaigns，每个 campaign 用 其topic 标出。
 
 ![img](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr6.jpg)[Download : Download full-size image](https://ars.els-cdn.com/content/image/1-s2.0-S1742287615000079-gr6.jpg)Fig. 6. Five spam campaigns that have the highest scores and less than 1000 emails
 
@@ -566,6 +618,8 @@ In this subsection, we present some characteristics of the spam campaigns identi
 ## Conclusion
 
 Spam campaigns act as the pivotal instrument for several cyber-based criminal activities. Consequently, the analysis of spam campaigns is a critical task for cyber security officers. In this paper, we propose a software framework for spam campaign detection, analysis and investigation. The framework provides [law enforcement officials](https://www.sciencedirect.com/topics/computer-science/law-enforcement-official) with a platform to conduct investigations on cyber crimes. Our system greatly reduces investigation efforts by consolidating spam emails into campaigns. Moreover, it aids investigators by providing various information about spam campaigns. Spam campaign characteristics are also unveiled by labeling spam campaigns and correlating different data sources. Additionally, we employ a feature-rich and scalable database to handle a large number of spam emails, a scoring mechanism to highlight severe spam campaigns and a visualization tool to further assist investigators. Our system has been adopted by a governmental organization and used by law enforcement officials to pursuit [spammers](https://www.sciencedirect.com/topics/computer-science/spammer), take down spamming servers and reduce spam volume.
+
+spam campaigns 是很多互联网犯罪活动的主要手段。所以，spam campaigns 分析是很多网络安全执法人员的关键任务。在本论文中，我们展示了一个用于 spam campaigns 检测，分析和调查的软件架构。该架构为执法人员提供了一个调查网络犯罪的平台，该系统通过将spam emails聚合到campaign，最大限度地降低调查人员的工作量。另外，它也努力避免给执法人员展示大量的spam campaign信息。 我们还通过标记 spam campaigns 和 关联不同的数据源，提炼出 spam campaign 的各种特征。另外，我们使用多功能和可拓展的数据库处理大量的spam emails,  使用计分机制来突出那些严重的spam campaigns，使用可视化工具来更好的辅助调查人员。我们的系统已经被一个政府组织采纳，被执法人员用以追查spammers，打掉了很多spamming 服务器，减少了垃圾邮件的数量。
 
 ## References
 
