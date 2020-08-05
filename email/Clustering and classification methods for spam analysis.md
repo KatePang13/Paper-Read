@@ -91,6 +91,12 @@ Aalto University , School of Science ,Degree Programme in Computer Science and E
 
 ## Clustering Algorithms and Visualization
 
+### 4.1 Feature selection for clustering
+
+#### 4.1.1 Subjects
+
+
+
 ## Technical Implementation
 
 ## Evaluation
